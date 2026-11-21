@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob: https://www.nijingcai.com; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://www.nijingcai.com;" />
+  <title>尼精彩</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- 侧边导航 -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">尼</div>
+        <div>
+          <div class="brand-name">尼精彩</div>
+          <div class="brand-sub">Windows 客户端 v1.2.3</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <button class="nav-item active" data-page="home"><span class="nav-ico">🎛️</span>设备</button>
+        <button class="nav-item" data-page="light"><span class="nav-ico">💡</span>灯效设置</button>
+        <button class="nav-item" data-page="energy"><span class="nav-ico">⚡</span>性能设置</button>
+        <button class="nav-item" data-page="more"><span class="nav-ico">🔧</span>更多设置</button>
+        <button class="nav-item" data-page="mine"><span class="nav-ico">👤</span>我的</button>
+      </nav>
+      <div class="sidebar-foot">一触即发，精彩直达</div>
+    </aside>
+
+    <!-- 主区域 -->
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <span id="connDot" class="conn-dot"></span>
+          <span id="connState">未连接</span>
+          <span id="deviceName" class="device-name">---</span>
+        </div>
+        <div class="topbar-right">
+          <select id="deviceType">
+            <option>散热器（显示屏）</option>
+            <option>水冷</option>
+            <option>液冷</option>
+            <option>风冷</option>
+          </select>
+          <button id="btnConnect" class="btn btn-primary">连接设备</button>
+          <button id="btnDisconnect" class="btn" disabled>断开</button>
+        </div>
+      </header>
+
+      <!-- 主页：设备 -->
+      <section class="page active" id="page-home">
+        <div class="home-hero card">
+          <div class="device-art" id="deviceArt">❄️</div>
+          <div class="home-hero-right">
+            <h2 id="homeDeviceTitle">泥神散热器</h2>
+            <p class="muted" id="homeDeviceSub">百变DIY-3Pro · 磁吸/液冷手机散热器</p>
+            <div class="home-actions">
+              <button id="btnPowerOn" class="btn btn-primary">开机</button>
+              <button id="btnPowerOff" class="btn btn-danger">关机</button>
+              <button id="btnTimer" class="btn">定时关闭</button>
+              <button id="btnRefresh" class="btn">刷新状态</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">设备状态 <span class="muted" id="stUpdated" style="font-weight:normal;font-size:12px"></span></div>
+          <div class="status-grid">
+            <div class="status-cell"><div class="status-val" id="stPower">---</div><div class="status-label">设备功率</div></div>
+            <div class="status-cell"><div class="status-val" id="stTemp">---</div><div class="status-label">温度状态</div></div>
+            <div class="status-cell"><div class="status-val" id="stMode">---</div><div class="status-label">散热模式</div></div>
+            <div class="status-cell"><div class="status-val" id="stFan">---</div><div class="status-label">风扇转速</div></div>
+          </div>
+        </div>
+
+        <div class="menu-grid">
+          <button class="menu-card" data-goto="light"><span>💡</span>灯效设置</button>
+          <button class="menu-card" data-goto="energy"><span>⚡</span>性能设置</button>
+          <button class="menu-card" data-goto="more"><span>🔧</span>更多设置</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">固件与日志</div>
+          <div class="row">
+            <span>固件版本：<b id="fwVersion">---</b></span>
+            <button id="btnQueryFw" class="btn btn-sm">查询固件</button>
+            <button id="btnClearLog" class="btn btn-sm">清空日志</button>
+          </div>
+          <pre id="logView" class="log-view"></pre>
+        </div>
+      </section>
+
+      <!-- 灯效设置 -->
+      <section class="page" id="page-light">
+        <div class="card">
+          <div class="card-title">灯效设置</div>
+          <div class="row between">
+            <span>灯效开关</span>
+            <label class="switch"><input type="checkbox" id="lightSwitch" /><span class="slider-ui"></span></label>
+          </div>
+          <div class="field">
+            <label>灯效模式</label>
+            <div class="mode-grid" id="lightModes"></div>
+          </div>
+          <div class="field">
+            <label>颜色（HSV 16bit）</label>
+            <div class="row">
+              <input type="color" id="lightColor" value="#0088ff" />
+              <div class="swatches" id="lightSwatches"></div>
+            </div>
+          </div>
+          <div class="field"><label>饱和度 <span id="satVal">255</span></label><input type="range" id="lightSat" min="200" max="255" value="255" /></div>
+          <div class="field"><label>亮度 <span id="briVal">255</span></label><input type="range" id="lightBri" min="0" max="255" value="255" /></div>
+          <div class="field"><label>速度 <span id="spdVal">50</span></label><input type="range" id="lightSpd" min="0" max="100" value="50" /></div>
+          <div class="row">
+            <button id="btnApplyLight" class="btn btn-primary">应用灯效</button>
+            <button id="btnLightDefault" class="btn">恢复默认</button>
+            <button id="btnLightClose" class="btn btn-danger">关闭灯效</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 性能设置（对齐手机端 EnergySetActivity） -->
+      <section class="page" id="page-energy">
+        <div class="card">
+          <div class="row between">
+            <div>
+              <div class="card-title" style="margin-bottom:2px">温控模式</div>
+              <div class="muted">按目标温度自动调节制冷强度</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="swTemp" /><span class="slider-ui"></span></label>
+          </div>
+          <div class="field"><label>目标温度 <b id="tempTargetVal">5</b> ℃（-30 ~ 30）</label><input type="range" id="tempTarget" min="-30" max="30" value="5" /></div>
+        </div>
+        <div class="card">
+          <div class="row between">
+            <div>
+              <div class="card-title" style="margin-bottom:2px">静音模式</div>
+              <div class="muted">降低风扇转速，噪音最小</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="swSilent" /><span class="slider-ui"></span></label>
+          </div>
+        </div>
+        <div class="card">
+          <div class="row between">
+            <div>
+              <div class="card-title" style="margin-bottom:2px">超频模式</div>
+              <div class="muted">最大制冷性能，注意凝水</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="swOverclock" /><span class="slider-ui"></span></label>
+          </div>
+        </div>
+        <div class="card">
+          <div class="row between">
+            <div>
+              <div class="card-title" style="margin-bottom:2px">自定义模式</div>
+              <div class="muted">手动设定转速与功率（开启即按当前滑块值下发）</div>
+            </div>
+            <label class="switch"><input type="checkbox" id="swCustom" /><span class="slider-ui"></span></label>
+          </div>
+          <div class="field"><label>风扇转速 <b id="fanVal">1</b> 档（1 ~ 6）</label><input type="range" id="fanSpeed" min="1" max="6" value="1" /></div>
+          <div class="field"><label>功率 <b id="customPowerVal">20</b> W（1 ~ 100）</label><input type="range" id="customPower" min="1" max="100" value="20" /></div>
+          <p class="muted">提示：松开滑块即发送；调节转速/功率会自动切换到自定义模式。</p>
+        </div>
+      </section>
+
+      <!-- 更多设置 -->
+      <section class="page" id="page-more">
+        <div class="card">
+          <div class="card-title">更多设置</div>
+          <div class="field">
+            <label>电压设置</label>
+            <div class="row" id="voltageGroup">
+              <label><input type="radio" name="voltage" value="12" /> 12V</label>
+              <label><input type="radio" name="voltage" value="15" checked /> 15V</label>
+              <label><input type="radio" name="voltage" value="20" /> 20V</label>
+            </div>
+          </div>
+          <div class="row between">
+            <span>水冷 / 液冷模式（开=水冷）</span>
+            <label class="switch"><input type="checkbox" id="coolMode" /><span class="slider-ui"></span></label>
+          </div>
+          <div class="row"><button id="btnApplyMore" class="btn btn-primary">应用</button></div>
+        </div>
+        <div class="card">
+          <div class="card-title">保护机制</div>
+          <p class="muted">设备内置低温保护、过流保护与冷凝保护。当温度低于设定阈值或检测到异常时，设备将自动降功率或停止制冷，属正常现象。</p>
+        </div>
+        <div class="card">
+          <div class="card-title">问题解决</div>
+          <ul class="muted">
+            <li>搜索不到设备：确认设备已通电、蓝牙已开启，且未被手机端占用连接。</li>
+            <li>连接后无状态：点击主页「刷新状态」，或断开后重连。</li>
+            <li>命令无响应：观察主页日志面板的收发记录，确认设备有回包。</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 我的 -->
+      <section class="page" id="page-mine">
+        <div class="card">
+          <div class="card-title">设备库</div>
+          <div class="row"><button id="btnLoadDevices" class="btn">加载设备列表</button></div>
+          <div id="deviceLib" class="device-lib"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">关于尼精彩</div>
+          <p class="muted">尼精彩 Windows 客户端 v1.2.3<br/>泥神系列散热器（水冷 / 液冷 / 风冷 / 带屏散热器）桌面控制端。<br/>服务器：www.nijingcai.com</p>
+          <div class="row"><button id="btnCheckVersion" class="btn">检查更新</button><span id="versionMsg" class="muted"></span></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 蓝牙设备选择弹窗 -->
+  <div class="modal hidden" id="bleModal">
+    <div class="modal-box">
+      <div class="card-title">选择蓝牙设备</div>
+      <p class="muted">正在扫描附近的泥神设备…</p>
+      <div id="bleDeviceList" class="ble-list"></div>
+      <div class="row"><button id="btnBleCancel" class="btn">取消</button></div>
+    </div>
+  </div>
+
+  <!-- 定时关闭弹窗 -->
+  <div class="modal hidden" id="timerModal">
+    <div class="modal-box">
+      <div class="card-title">定时关闭</div>
+      <div class="mode-grid">
+        <button class="mode-btn timer-opt" data-min="30">30 分钟后</button>
+        <button class="mode-btn timer-opt" data-min="60">1 小时后</button>
+        <button class="mode-btn timer-opt" data-min="120">2 小时后</button>
+        <button class="mode-btn timer-opt" data-min="180">3 小时后</button>
+      </div>
+      <div class="row"><label>自定义（分钟）：<input type="number" id="timerCustom" min="1" max="1440" value="45" style="width:80px" /></label></div>
+      <div class="row">
+        <button id="btnTimerCustom" class="btn btn-primary">确认</button>
+        <button id="btnTimerCancel" class="btn">取消定时</button>
+        <button id="btnTimerClose" class="btn">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="protocol.js"></script>
+  <script src="ble.js"></script>
+  <script src="api.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
